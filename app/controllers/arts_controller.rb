@@ -194,7 +194,7 @@ class ArtsController < ApplicationController
     @photos_count= Photo.count()
     #@photos_count= @p_count.to_s.chars.to_a.reverse.each_slice(1).map(&:join).join(",").reverse
  
-    @c_count= Country.find(:first)
+    @c_count= Country.first
     @countries_count= @c_count.country_count if @c_count.present?
     #@countries_count= @co_count.to_s.chars.to_a.reverse.each_slice(1).map(&:join).join(",").reverse
     

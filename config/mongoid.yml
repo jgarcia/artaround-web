@@ -7,9 +7,14 @@ test:
   database: artaround_test
 
 development:
-  <<: *defaults
-  autocreate_indexes: true
-  database: artaround
+  clients:
+    default:
+      database: artaround
+      hosts:
+        - localhost:27017
+      autocreate_indexes: true
+
+
 
 # set these environment variables on your prod server
 production:

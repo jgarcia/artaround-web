@@ -2,7 +2,7 @@ class Art
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Slug
-  include Mongoid::MultiParameterAttributes
+  # include Mongoid::MultiParameterAttributes
 
   has_many :comments
   has_many :art_link
@@ -14,7 +14,7 @@ class Art
   has_many :tags, :dependent => :destroy
   # after_save :link_art_id
   
-  attr_protected :_id, :commissioned, :approved, :location, :slug
+  # attr_protected :_id, :commissioned, :approved, :location, :slug
 
   before_save :ensure_well_formed_url
 
@@ -68,32 +68,37 @@ class Art
   field :total_visits, :type => Integer # sum of the previous two, duplicated to make filtering easy
   field :ranking, :type => Integer
 
-  index [[:location, Mongo::GEO2D]]
-  index :commissioned
-  index :category
-  index [[:approved, Mongo::ASCENDING], [:slug, Mongo::ASCENDING]]
-  index :approved
+  # TODO: Need to bring back this indexes, as the current API does not support
+  # this specific DSL
+  # index [[:location, Mongo::GEO2D]]
+  # index({ location: "2d"})
+  # index({ commissioned: 1 })
+  # index({ category: 1 })
+  # index [[:approved, Mongo::ASCENDING], [:slug, Mongo::ASCENDING]]
+  # index :approved
   # index :slug
-  index :total_visits
-  index :web_visits
-  index :api_visits
+  # index :total_visits
+  # index :web_visits
+  # index :api_visits
 
-  scope :commissioned, :where => {:commissioned => true}
-  scope :uncommissioned, :where => {:commissioned => false}
-  scope :approved, :where => {:approved => true}
-  scope :unapproved, :where => {:approved => false}
-  scope :featured, :where => {:featured => true}
+  scope :commissioned, -> { where(:commissioned => true) }
+  scope :uncommissioned, -> { where(:commissioned => false) }
+  scope :approved, -> { where(:approved => true) }
+  scope :unapproved, -> { where(:approved => false) }
+  scope :featured, -> { where(:featured => true) }
 
-  scope :inbox, :where => {:approved => false}, :order_by => :created_at.desc
-  scope :submitted, :order_by => :submitted_at.desc
+  scope :inbox, -> { where(:approved => false).order_by(:created_at.desc) }
+  scope :submitted, -> { order_by(:submitted_at.desc) }
 
-  scope :popular, :where => {:ranking => {"$type" => 16}}, :order_by => :ranking.asc
+  scope :popular, -> { where(:ranking => {"$type" => 16}).order_by(:ranking.asc) }
 
   validates_presence_of :title
   validate :contains_valid_categories
   validates_numericality_of :year, :allow_blank => true
   validate :contains_location, :on => :create
   validates_uniqueness_of :slug
+
+
 
   def url
     "/arts/#{slug}"

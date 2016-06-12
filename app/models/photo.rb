@@ -5,8 +5,6 @@ class Photo
 
   belongs_to :art
 
-  attr_protected :_id
-
   field :attribution_text, :type => String
   field :attribution_url, :type => String
   field :primary, :type => Boolean, :default => false
