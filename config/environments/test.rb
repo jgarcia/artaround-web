@@ -31,4 +31,5 @@ Artaround::Application.configure do
   # config.active_record.schema_format = :sql
 
   config.active_support.deprecation = :stderr
+  config.eager_load = false
 end

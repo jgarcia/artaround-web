@@ -34,4 +34,5 @@ Artaround::Application.configure do
   config.action_mailer.delivery_method = :test
   config.action_mailer.perform_deliveries = true
   
+  config.eager_load = false
 end
